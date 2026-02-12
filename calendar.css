@@ -47,9 +47,6 @@ body {
     font-size: 14px;
 }
 
-.calendar-menu a:hover {
-    color: #ccc;
-}
 
 .calendar-content {
     flex: 1;
@@ -68,18 +65,6 @@ body {
     color: #333;
 }
 
-.calendar-header button {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    background-color: white;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.calendar-header button:hover {
-    background-color: #f0f0f0;
-}
 
 .calendar-grid {
     display: grid;
