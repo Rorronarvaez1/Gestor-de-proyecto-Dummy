@@ -88,3 +88,11 @@ body {
 }
 
 
+.calendar-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
