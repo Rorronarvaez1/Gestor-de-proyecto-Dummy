@@ -15,42 +15,6 @@ body {
     height: 100vh;
 }
 
-.dash-menu {
-    width: 20%;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-}
-
-.dash-menu h1 {
-    margin-bottom: 30px;
-    font-size: 24px;
-}
-
-.dash-menu h3 {
-    margin-bottom: 15px;
-    font-size: 14px;
-    text-transform: uppercase;
-}
-
-.dash-menu ul {
-    list-style: none;
-}
-
-.dash-menu ul li {
-    margin-bottom: 10px;
-}
-
-.dash-menu ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.dash-menu ul li a:hover {
-    color: #ccc;
-}
 
 .dash-content {
     flex: 1;

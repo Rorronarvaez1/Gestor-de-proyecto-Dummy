@@ -14,38 +14,6 @@ body {
     height: 100vh;
 }
 
-.projects-menu {
-    width: 20%;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-}
-
-.projects-menu h1 {
-    margin-bottom: 30px;
-    font-size: 24px;
-}
-
-.projects-menu h3 {
-    margin-bottom: 15px;
-    font-size: 14px;
-    text-transform: uppercase;
-}
-
-.projects-menu ul {
-    list-style: none;
-}
-
-.projects-menu li {
-    margin-bottom: 10px;
-}
-
-.projects-menu a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-}
 
 
 .projects-content {

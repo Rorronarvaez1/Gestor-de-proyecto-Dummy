@@ -4,26 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="site.css">
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
+    <site-header></site-header>
     <div class="login-container">
         <div class="login-box">
             <h1>Login</h1>
-            <form>
+            <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username">
+                    <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+                    <input type="password" id="password" name="password" required>
                 </div>
-                <a href="dashboard.html" class="login-btn">Login</a>
-                <a href="register.html" class="login-btn">Register</a>
+                <div class="form-group">
+                    <button type="submit" class="login-btn">Login</button>
+                    <a href="register.html" class="login-btn">Register</a>
+                </div>
+                <div id="msg" aria-live="polite"></div>
             </form>
+
+    <script>
+    async function hashString(str) {
+        const enc = new TextEncoder();
+        const data = enc.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const msg = document.getElementById('msg');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        if (!username || !password) {
+            msg.textContent = 'Enter username and password.';
+            return;
+        }
+        const usersRaw = localStorage.getItem('users');
+        const users = usersRaw ? JSON.parse(usersRaw) : {};
+        const storedHash = users[username];
+        if (!storedHash) {
+            msg.textContent = 'Invalid username or password.';
+            return;
+        }
+        const passHash = await hashString(password);
+        if (passHash === storedHash) {
+            localStorage.setItem('currentUser', username);
+            msg.textContent = 'Login successful — redirecting...';
+            setTimeout(() => location.href = 'dashboard.html', 600);
+        } else {
+            msg.textContent = 'Invalid username or password.';
+        }
+    });
+    </script>
             
         </div>
     </div>
+    <site-footer></site-footer>
+    <script src="webcomponents.js"></script>
 </body>
 </html>
+
+
+
+<!-- 
+Block inside pages when not logged in
+Update all the html files so that the Footer and header in a separate file and imported in the other pages using fetch
+-->

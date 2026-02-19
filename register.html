@@ -4,29 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="site.css">
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
+    <site-header></site-header>
     <div class="login-container">
         <div class="login-box">
             <h1>Register</h1>
-            <form>
+            <form id="registerForm">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username">
+                    <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+                    <input type="password" id="password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Confirm Password</label>
-                    <input type="password" id="password" name="password">
+                    <label for="confirm">Confirm Password</label>
+                    <input type="password" id="confirm" name="confirm" required>
                 </div>
-                <a href="login.html" class="login-btn">Login</a>
+                <div class="form-group">
+                    <button type="submit" class="login-btn">Register</button>
+                    <a href="login.html" class="login-link">Already have an account?</a>
+                </div>
+                <div id="msg" aria-live="polite"></div>
             </form>
-            
+
         </div>
     </div>
+
+    <script>
+    async function hashString(str) {
+        const enc = new TextEncoder();
+        const data = enc.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function saveUser(username, passHash) {
+        const raw = localStorage.getItem('users');
+        const users = raw ? JSON.parse(raw) : {};
+        users[username] = passHash;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const msg = document.getElementById('msg');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm').value;
+        if (!username || !password) {
+            msg.textContent = 'Username and password are required.';
+            return;
+        }
+        if (password !== confirm) {
+            msg.textContent = 'Passwords do not match.';
+            return;
+        }
+        const usersRaw = localStorage.getItem('users');
+        const users = usersRaw ? JSON.parse(usersRaw) : {};
+        if (users[username]) {
+            msg.textContent = 'Username already exists.';
+            return;
+        }
+        const passHash = await hashString(password);
+        saveUser(username, passHash);
+        msg.textContent = 'Registered successfully — redirecting to login...';
+        setTimeout(() => location.href = 'login.html', 900);
+    });
+    </script>
+    <site-footer></site-footer>
+    <script src="webcomponents.js"></script>
 </body>
 </html>
