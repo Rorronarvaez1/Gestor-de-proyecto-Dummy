@@ -11,9 +11,23 @@ class SiteHeader extends HTMLElement {
           <li><a href="calendar.html">Calendar</a></li>
           <li><a href="#">Settings</a></li>
         </ul>
+        <div class="header-actions">
+          <button id="logoutBtn" class="logout-btn">Logout</button>
+        </ul>
       </div>
     </header>
     `;
+    const btn = this.querySelector('#logoutBtn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        if (typeof logout === 'function') {
+          logout();
+        } else {
+          localStorage.removeItem('currentUser');
+          location.href = 'login.html';
+        }
+      });
+    }
   }
 }
 

@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="site.css">
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    <site-header></site-header>
+    
     <div class="login-container">
         <div class="login-box">
             <h1>Login</h1>
@@ -57,7 +56,9 @@
         if (passHash === storedHash) {
             localStorage.setItem('currentUser', username);
             msg.textContent = 'Login successful — redirecting...';
-            setTimeout(() => location.href = 'dashboard.html', 600);
+            const redirect = localStorage.getItem('postLoginRedirect') || 'dashboard.html';
+            localStorage.removeItem('postLoginRedirect');
+            setTimeout(() => location.href = redirect, 600);
         } else {
             msg.textContent = 'Invalid username or password.';
         }
@@ -66,8 +67,7 @@
             
         </div>
     </div>
-    <site-footer></site-footer>
-    <script src="webcomponents.js"></script>
+    
 </body>
 </html>
 
