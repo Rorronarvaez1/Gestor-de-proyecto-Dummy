@@ -9,6 +9,7 @@ class SiteHeader extends HTMLElement {
           <li><a href="dashboard.html">Home</a></li>
           <li><a href="projects.html">Projects</a></li>
           <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="pokemon.html">Pokemon</a></li>
           <li><a href="#">Settings</a></li>
         </ul>
         <div class="header-actions">

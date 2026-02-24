@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>PokeAPI</title>
+	<link rel="stylesheet" href="site.css">
+	<link rel="stylesheet" href="pokemon.css">
+	<script src="auth.js"></script>
+	<script>requireAuth();</script>
+</head>
+<body>
+	<site-header></site-header>
+	<main class="container">
+		<h1>Pokémon</h1>
+		<p id="status">Loading...</p>
+			<h2 id="pokemon-name"></h2>
+			<img id="pokemon-image" alt="Pokemon image" hidden>
+	</main>
+	<site-footer></site-footer>
+    <script src="webcomponents.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>

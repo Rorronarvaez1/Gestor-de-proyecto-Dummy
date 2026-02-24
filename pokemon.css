@@ -1,0 +1,51 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f5f5f5;
+}
+
+.container {
+	margin-left: var(--sidebar-width);
+	padding: var(--content-padding);
+	box-sizing: border-box;
+	min-height: 100vh;
+}
+
+.container h1 {
+	color: #333;
+	margin-bottom: 20px;
+}
+
+#status {
+	color: #666;
+	margin-bottom: 15px;
+}
+
+#pokemon-name {
+	color: #333;
+	text-transform: capitalize;
+	margin-bottom: 15px;
+}
+
+#pokemon-image {
+	width: 180px;
+	height: 180px;
+	object-fit: contain;
+	background-color: white;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 10px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 800px) {
+	.container {
+		margin-left: 0;
+		padding: 20px;
+	}
+}
