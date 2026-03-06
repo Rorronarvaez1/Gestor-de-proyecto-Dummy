@@ -11,11 +11,33 @@
 </head>
 <body>
 	<site-header></site-header>
-	<main class="container">
-		<h1>Pokémon</h1>
-		<p id="status">Loading...</p>
-			<h2 id="pokemon-name"></h2>
-			<img id="pokemon-image" alt="Pokemon image" hidden>
+	<main class="pokemon-container">
+		<div class="pokemon-content">
+			<h1>Pokédex</h1>
+			<p id="status">Cargando Pokémon...</p>
+
+			<section class="filters" aria-label="Filtros de Pokémon">
+				<div class="filter-group">
+					<label for="filter-name">Nombre</label>
+					<input id="filter-name" type="text">
+				</div>
+
+				<div class="filter-group">
+					<label for="filter-id">ID</label>
+					<input id="filter-id" type="number" min="1">
+				</div>
+
+				<div class="filter-group">
+					<label for="filter-type">Tipo</label>
+					<select id="filter-type">
+						<option value="all">Todos</option>
+					</select>
+				</div>
+			</section>
+
+			<p id="results-count"></p>
+			<section id="pokemon-list" class="pokemon-grid" aria-live="polite"></section>
+		</div>
 	</main>
 	<site-footer></site-footer>
     <script src="webcomponents.js"></script>
