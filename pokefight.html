@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>PokeFight</title>
+	<link rel="stylesheet" href="site.css">
+	<link rel="stylesheet" href="pokefight.css">
+	<script src="auth.js"></script>
+	<script>requireAuth();</script>
+</head>
+<body>
+	<site-header></site-header>
+
+	<main class="pokefight-container">
+		<div class="pokefight-content">
+			<h1>PokeFight</h1>
+			<p class="subtitle">Escribe el nombre de tu Pokemon y pelea contra un rival al azar.</p>
+
+			<section class="battle-setup" aria-label="Configuracion del combate">
+				<label for="player-pokemon-name">Tu Pokemon</label>
+				<div class="setup-controls">
+					<input
+						id="player-pokemon-name"
+						type="text"
+						placeholder="Ejemplo: pikachu"
+						autocomplete="off"
+					>
+					<button id="start-battle-btn" type="button">Iniciar combate</button>
+				</div>
+				<p id="battle-status" role="status">Ingresa un nombre de Pokemon para comenzar.</p>
+			</section>
+
+			<section class="battlefield" aria-live="polite">
+				<article class="fighter-card" id="player-card">
+					<h2 id="player-name">Tu Pokemon</h2>
+					<img
+						id="player-sprite"
+						src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+						alt="Sprite del Pokemon del jugador"
+					>
+					<p class="types" id="player-types">Tipo: --</p>
+					<div class="hp-row">
+						<span id="player-hp-text">HP: -- / --</span>
+						<div class="hp-bar" aria-hidden="true">
+							<div id="player-hp-fill" class="hp-fill"></div>
+						</div>
+					</div>
+				</article>
+
+				<div class="versus" aria-hidden="true">VS</div>
+
+				<article class="fighter-card enemy" id="enemy-card">
+					<h2 id="enemy-name">Pokemon enemigo</h2>
+					<img
+						id="enemy-sprite"
+						src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+						alt="Sprite del Pokemon enemigo"
+					>
+					<p class="types" id="enemy-types">Tipo: --</p>
+					<div class="hp-row">
+						<span id="enemy-hp-text">HP: -- / --</span>
+						<div class="hp-bar" aria-hidden="true">
+							<div id="enemy-hp-fill" class="hp-fill"></div>
+						</div>
+					</div>
+				</article>
+			</section>
+
+			<section class="moves-panel" aria-label="Ataques del jugador">
+				<h3>Elige un ataque</h3>
+				<div id="moves-container" class="moves-grid"></div>
+			</section>
+
+			<section class="battle-log-panel" aria-label="Registro del combate">
+				<h3>Registro del combate</h3>
+				<ul id="battle-log" class="battle-log"></ul>
+			</section>
+		</div>
+	</main>
+
+	<site-footer></site-footer>
+	<script src="webcomponents.js"></script>
+	<script src="pokefight.js"></script>
+</body>
+</html>
