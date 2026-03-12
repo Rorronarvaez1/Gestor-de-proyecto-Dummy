@@ -62,6 +62,10 @@ body {
 	border-radius: 8px;
 }
 
+#turn-limit {
+	max-width: 160px;
+}
+
 .setup-controls button {
 	padding: 10px 16px;
 	border: none;
@@ -80,6 +84,12 @@ body {
 #battle-status {
 	font-size: 0.95rem;
 	color: #334155;
+}
+
+#turn-info {
+	margin-top: 8px;
+	font-size: 0.9rem;
+	color: #475569;
 }
 
 #battle-status.error {

@@ -2,8 +2,10 @@ const POKEMON_ENDPOINT = "https://pokeapi.co/api/v2/pokemon";
 const DEFAULT_SPRITE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
 
 const playerNameInput = document.getElementById("player-pokemon-name");
+const turnLimitInput = document.getElementById("turn-limit");
 const startBattleButton = document.getElementById("start-battle-btn");
 const battleStatusElement = document.getElementById("battle-status");
+const turnInfoElement = document.getElementById("turn-info");
 const movesContainer = document.getElementById("moves-container");
 const battleLogElement = document.getElementById("battle-log");
 
@@ -31,6 +33,8 @@ const battleState = {
 	enemy: null,
 	playerMoves: [],
 	enemyMoves: [],
+	turnLimit: 10,
+	turnsPlayed: 0,
 };
 
 const moveCache = new Map();
@@ -110,6 +114,25 @@ function setStartButtonLoading(isLoading) {
 	startBattleButton.textContent = isLoading ? "Cargando..." : "Iniciar combate";
 }
 
+function getTurnLimitValue() {
+	const parsedValue = Number.parseInt(turnLimitInput.value, 10);
+	if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+		return 10;
+	}
+
+	return parsedValue;
+}
+
+function updateTurnInfo() {
+	if (battleState.inProgress) {
+		turnInfoElement.textContent = `Turnos: ${battleState.turnsPlayed} / ${battleState.turnLimit}`;
+		return;
+	}
+
+	const pendingLimit = getTurnLimitValue();
+	turnInfoElement.textContent = `Turnos: 0 / ${pendingLimit}`;
+}
+
 function getStatValue(pokemonData, statName) {
 	const statEntry = pokemonData.stats.find((item) => item.stat.name === statName);
 	return statEntry ? statEntry.base_stat : 1;
@@ -122,8 +145,6 @@ function getSpriteUrl(pokemonData) {
 
 function buildFighter(pokemonData) {
 	const hpBase = getStatValue(pokemonData, "hp");
-	const attackBase = getStatValue(pokemonData, "attack");
-	const defenseBase = getStatValue(pokemonData, "defense");
 
 	const maxHp = Math.max(65, hpBase + 75);
 
@@ -135,8 +156,6 @@ function buildFighter(pokemonData) {
 		sprite: getSpriteUrl(pokemonData),
 		maxHp,
 		currentHp: maxHp,
-		attack: Math.max(20, attackBase + 12),
-		defense: Math.max(15, defenseBase + 10),
 	};
 }
 
@@ -355,46 +374,63 @@ function setMoveButtonsEnabled(isEnabled) {
 	});
 }
 
-function calculateDamage(attacker, defender, move) {
-	const attackFactor = attacker.attack / Math.max(1, defender.defense);
-	const stabBonus = attacker.types.includes(move.type) ? 1.2 : 1;
-	const randomFactor = 0.85 + Math.random() * 0.25;
-	const scaledDamage = (move.power * attackFactor * stabBonus * randomFactor) / 2.2;
-
-	return Math.max(1, Math.round(scaledDamage));
+function calculateDamage(move) {
+	return Math.max(1, Number(move.power) || 1);
 }
 
-function attackHits(move) {
-	const precision = move.accuracy ?? 100;
-	return Math.random() * 100 <= precision;
-}
-
-function finishBattle(winnerSide) {
+function finishBattle(winnerSide, reason = "knockout") {
 	battleState.inProgress = false;
 	battleState.waitingEnemy = false;
 	setMoveButtonsEnabled(false);
+	updateTurnInfo();
 
 	if (winnerSide === "player") {
-		setStatus("Ganaste el combate.", "success");
-		appendBattleLog("Tu Pokemon gana la batalla.");
+		if (reason === "turn-limit") {
+			setStatus("Ganaste por tener mas vida al llegar al limite de turnos.", "success");
+			appendBattleLog("Ganaste por mayor vida restante.");
+		} else {
+			setStatus("Ganaste el combate.", "success");
+			appendBattleLog("Tu Pokemon gana la batalla.");
+		}
 	} else {
-		setStatus("Perdiste el combate.", "error");
-		appendBattleLog("El Pokemon enemigo gana la batalla.");
+		if (reason === "turn-limit") {
+			setStatus("Perdiste por tener menos vida al llegar al limite de turnos.", "error");
+			appendBattleLog("El rival gana por mayor vida restante.");
+		} else {
+			setStatus("Perdiste el combate.", "error");
+			appendBattleLog("El Pokemon enemigo gana la batalla.");
+		}
 	}
 }
 
+function finishByTurnLimit() {
+	const playerHp = battleState.player.currentHp;
+	const enemyHp = battleState.enemy.currentHp;
+
+	if (playerHp > enemyHp) {
+		finishBattle("player", "turn-limit");
+		return;
+	}
+
+	if (enemyHp > playerHp) {
+		finishBattle("enemy", "turn-limit");
+		return;
+	}
+
+	battleState.inProgress = false;
+	battleState.waitingEnemy = false;
+	setMoveButtonsEnabled(false);
+	updateTurnInfo();
+	setStatus("Empate: se alcanzo el limite de turnos con la misma vida.");
+	appendBattleLog("Combate empatado por limite de turnos.");
+}
+
 function executeAttack(attackerSide, defenderSide, move) {
-	const attacker = battleState[attackerSide];
 	const defender = battleState[defenderSide];
 	const attackerLabel = attackerSide === "player" ? "Tu Pokemon" : "Rival";
 	const defenderLabel = defenderSide === "player" ? "tu Pokemon" : "el rival";
 
-	if (!attackHits(move)) {
-		appendBattleLog(`${attackerLabel} uso ${move.displayName}, pero fallo.`);
-		return null;
-	}
-
-	const damage = calculateDamage(attacker, defender, move);
+	const damage = calculateDamage(move);
 	defender.currentHp = Math.max(0, defender.currentHp - damage);
 	updateHpUi(defenderSide);
 	appendBattleLog(`${attackerLabel} uso ${move.displayName} e hizo ${damage} de danio a ${defenderLabel}.`);
@@ -436,6 +472,15 @@ async function runPlayerTurn(moveIndex) {
 		return;
 	}
 
+	battleState.turnsPlayed += 1;
+	updateTurnInfo();
+	appendBattleLog(`Fin del turno ${battleState.turnsPlayed} de ${battleState.turnLimit}.`);
+
+	if (battleState.turnsPlayed >= battleState.turnLimit) {
+		finishByTurnLimit();
+		return;
+	}
+
 	battleState.waitingEnemy = false;
 	setMoveButtonsEnabled(true);
 	setStatus("Tu turno. Elige un ataque.");
@@ -448,6 +493,8 @@ function resetBattleStateUi() {
 	battleState.enemy = null;
 	battleState.playerMoves = [];
 	battleState.enemyMoves = [];
+	battleState.turnsPlayed = 0;
+	battleState.turnLimit = getTurnLimitValue();
 
 	renderFighter("player");
 	renderFighter("enemy");
@@ -455,6 +502,7 @@ function resetBattleStateUi() {
 	movesContainer.innerHTML = "";
 	setMoveButtonsEnabled(false);
 	clearBattleLog();
+	updateTurnInfo();
 }
 
 async function startBattle() {
@@ -468,9 +516,15 @@ async function startBattle() {
 		return;
 	}
 
+	const configuredTurnLimit = getTurnLimitValue();
+	turnLimitInput.value = String(configuredTurnLimit);
+
 	startingBattle = true;
 	setStartButtonLoading(true);
 	resetBattleStateUi();
+	battleState.turnLimit = configuredTurnLimit;
+	battleState.turnsPlayed = 0;
+	updateTurnInfo();
 	setStatus("Buscando tu Pokemon...");
 
 	try {
@@ -490,6 +544,8 @@ async function startBattle() {
 		battleState.enemyMoves = enemyMoves.length > 0 ? enemyMoves : getFallbackMoves(4);
 		battleState.inProgress = true;
 		battleState.waitingEnemy = false;
+		battleState.turnsPlayed = 0;
+		updateTurnInfo();
 
 		renderFighter("player");
 		renderFighter("enemy");
@@ -498,6 +554,7 @@ async function startBattle() {
 
 		appendBattleLog(`Tu Pokemon es ${battleState.player.displayName}.`);
 		appendBattleLog(`Tu rival aleatorio es ${battleState.enemy.displayName}.`);
+		appendBattleLog(`Limite de turnos: ${battleState.turnLimit}.`);
 		setStatus("Combate iniciado. Tu turno.", "success");
 	} catch (error) {
 		console.error(error);
@@ -518,6 +575,10 @@ playerNameInput.addEventListener("keydown", (event) => {
 		event.preventDefault();
 		startBattle();
 	}
+});
+
+turnLimitInput.addEventListener("input", () => {
+	updateTurnInfo();
 });
 
 movesContainer.addEventListener("click", (event) => {

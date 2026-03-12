@@ -26,9 +26,18 @@
 						placeholder="Ejemplo: pikachu"
 						autocomplete="off"
 					>
+					<input
+						id="turn-limit"
+						type="number"
+						min="1"
+						value="10"
+						placeholder="Limite de turnos"
+						title="Limite de turnos"
+					>
 					<button id="start-battle-btn" type="button">Iniciar combate</button>
 				</div>
 				<p id="battle-status" role="status">Ingresa un nombre de Pokemon para comenzar.</p>
+				<p id="turn-info">Turnos: -- / --</p>
 			</section>
 
 			<section class="battlefield" aria-live="polite">
@@ -36,7 +45,7 @@
 					<h2 id="player-name">Tu Pokemon</h2>
 					<img
 						id="player-sprite"
-						src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+						src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg"
 						alt="Sprite del Pokemon del jugador"
 					>
 					<p class="types" id="player-types">Tipo: --</p>
@@ -54,7 +63,7 @@
 					<h2 id="enemy-name">Pokemon enemigo</h2>
 					<img
 						id="enemy-sprite"
-						src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+						src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg"
 						alt="Sprite del Pokemon enemigo"
 					>
 					<p class="types" id="enemy-types">Tipo: --</p>
